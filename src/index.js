@@ -329,7 +329,8 @@ class Board extends React.Component {
   }
 
   render() {
-    const status = 'Next player: White';
+    const turn = this.state.playerTurn == "W" ? "White" : "Black";
+    const status = 'Next player: ' + turn;
 
     return (
       <div>
