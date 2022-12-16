@@ -306,6 +306,13 @@ class Board extends React.Component {
       let b = JSON.stringify(move);
       let c = a.indexOf(b);
       if (c != -1) {
+        if (this.state.squares[coordinate] == "BK"){
+          alert("White won");
+        }
+        if (this.state.squares[coordinate] == "WK"){
+          alert("Black Won");
+        }
+
         const squares = this.state.squares.slice();
         squares[coordinate] = this.state.squares[this.state.click1];
         squares[this.state.click1] = "";
