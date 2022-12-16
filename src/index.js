@@ -5,7 +5,7 @@ import "./index.css";
 class Square extends React.Component {
   render() {
     return (
-      <button 
+      <button
         className={["square", this.props.color].join(' ')}
         onClick={this.props.onClick}
       >
@@ -35,7 +35,7 @@ class Board extends React.Component {
     arr[13] = "BP";
     arr[14] = "BP";
     arr[15] = "BP";
-    arr[48] = "";
+    arr[48] = "WP";
     arr[49] = "WP";
     arr[50] = "WP";
     arr[51] = "WP";
@@ -60,61 +60,212 @@ class Board extends React.Component {
 
   leftEdgeSquares = [0, 8, 16, 24, 32, 40, 48, 56];
   rightEdgeSquares = [7, 15, 23, 31, 39, 47, 55, -1];
-  rook(coordinate){
+  secondRank = [48, 49, 50, 51, 52, 53, 54, 55];
+  seventhRank = [8, 9, 10, 11, 12, 13, 14, 15];
+
+  aAndBFiles = [0, 8, 16, 24, 32, 40, 48, 56, 1, 9, 17, 25, 33, 41, 49, 57];
+  gAndHFiles = [7, 15, 23, 31, 39, 47, 55, 63, 6, 14, 22, 30, 38, 46, 54, 62];
+
+  pawn(coordinate) {
+    let legal = [];
+    // if white
+    if (this.state.playerTurn == "W") {
+      // moving up
+      let newCoordinate = coordinate - 8;
+      if (newCoordinate >= 0) {
+        if (this.state.squares[newCoordinate] == "") {
+          legal.push([coordinate, newCoordinate])
+          if (this.secondRank.includes(coordinate)) {
+            newCoordinate -= 8;
+            if (this.state.squares[newCoordinate] == "") {
+              legal.push([coordinate, newCoordinate]);
+            }
+          }
+        }
+      }
+      // capturing left
+      newCoordinate = coordinate - 9;
+      if (!this.rightEdgeSquares.includes(newCoordinate)) {
+        if ((this.state.squares[newCoordinate] + "z")[0] == "B") {
+          legal.push([coordinate, newCoordinate]);
+        }
+      }
+      // capturing right
+      newCoordinate = coordinate - 7;
+      if (!this.leftEdgeSquares.includes(newCoordinate)) {
+        if ((this.state.squares[newCoordinate] + "z")[0] == "B") {
+          legal.push([coordinate, newCoordinate]);
+        }
+      }
+
+    }
+    // if black
+    else {
+      // moving down
+      let newCoordinate = coordinate + 8;
+      if (newCoordinate <= 63) {
+        if (this.state.squares[newCoordinate] == "") {
+          legal.push([coordinate, newCoordinate]);
+          if (this.seventhRank.includes(coordinate)) {
+            newCoordinate += 8;
+            if (this.state.squares[newCoordinate] == "") {
+              legal.push([coordinate, newCoordinate]);
+            }
+          }
+        }
+      }
+      // capturing true left
+      newCoordinate = coordinate + 7;
+      if (!this.rightEdgeSquares.includes(newCoordinate)) {
+        if ((this.state.squares[newCoordinate] + "z")[0] == "W") {
+          legal.push([coordinate, newCoordinate]);
+        }
+      }
+      // capturing true right
+      newCoordinate = coordinate + 9;
+      if (!this.leftEdgeSquares.includes(newCoordinate)) {
+        if ((this.state.squares[newCoordinate] + "z")[0] == "W") {
+          legal.push([coordinate, newCoordinate]);
+        }
+      }
+
+    }
+
+    return legal;
+  }
+  knight(coordinate) {
+    let legal = []
+    let newCoordinate = coordinate - 17;
+    let fromLeft = this.aAndBFiles.includes(coordinate);
+    let toRight = this.gAndHFiles.includes(newCoordinate);
+    if (newCoordinate >= 0 && newCoordinate <= 63){
+      if (!(fromLeft && toRight)) {
+        if ((this.state.squares[newCoordinate]+"z")[0] != this.state.playerTurn){
+          legal.push([coordinate, newCoordinate]);
+        }
+      }
+    }
+    newCoordinate = coordinate - 15;
+    let fromRight = this.gAndHFiles.includes(coordinate);
+    let toLeft = this.aAndBFiles.includes(newCoordinate);
+    if (newCoordinate >= 0 && newCoordinate <= 63){
+      if (!(fromRight && toLeft)){
+        if ((this.state.squares[newCoordinate]+"z")[0] != this.state.playerTurn){
+          legal.push([coordinate, newCoordinate]);
+        }
+      }
+    }
+    newCoordinate = coordinate - 10;
+    toRight = this.gAndHFiles.includes(newCoordinate);
+    if (newCoordinate >= 0 && newCoordinate <= 63){
+      if (!(fromLeft && toRight)) {
+        if ((this.state.squares[newCoordinate]+"z")[0] != this.state.playerTurn){
+          legal.push([coordinate, newCoordinate]);
+        }
+      }
+    }
+    newCoordinate = coordinate - 6;
+    toLeft = this.aAndBFiles.includes(newCoordinate);
+    if (newCoordinate >= 0 && newCoordinate <= 63){
+      if (!(fromRight && toLeft)) {
+        if ((this.state.squares[newCoordinate]+"z")[0] != this.state.playerTurn){
+          legal.push([coordinate, newCoordinate]);
+        }
+      }
+    }
+    newCoordinate = coordinate + 6;
+    toRight = this.gAndHFiles.includes(newCoordinate);
+    if (newCoordinate >= 0 && newCoordinate <= 63){
+      if (!(fromLeft && toRight)){
+        if ((this.state.squares[newCoordinate]+"z")[0] != this.state.playerTurn){
+          legal.push([coordinate, newCoordinate]);
+        }
+      }
+    }
+    newCoordinate = coordinate + 10;
+    toLeft = this.aAndBFiles.includes(newCoordinate);
+    if (newCoordinate >= 0 && newCoordinate <= 63){
+      if (!(fromRight && toLeft)) {
+        if ((this.state.squares[newCoordinate]+"z")[0] != this.state.playerTurn){
+          legal.push([coordinate, newCoordinate]);
+        }
+      }
+    }
+    newCoordinate = coordinate + 15;
+    toRight = this.gAndHFiles.includes(newCoordinate);
+    if (newCoordinate >= 0 && newCoordinate <= 63){
+      if (!(fromLeft && toRight)) {
+        if ((this.state.squares[newCoordinate]+"z")[0] != this.state.playerTurn){
+          legal.push([coordinate, newCoordinate]);
+        }
+      }
+    }
+    newCoordinate = coordinate + 17;
+    toLeft = this.aAndBFiles.includes(newCoordinate);
+    if (newCoordinate >= 0 && newCoordinate <= 63){
+      if (!(fromRight && toLeft)) {
+        if ((this.state.squares[newCoordinate]+"z")[0] != this.state.playerTurn){
+          legal.push([coordinate, newCoordinate]);
+        }
+      }
+    }
+    return legal;
+  }
+  rook(coordinate) {
     let legal = [];
     // check moving right
-    for (let i = 1; i<=7; i++){
+    for (let i = 1; i <= 7; i++) {
       let newCoordinate = coordinate + i
-      if (newCoordinate>63 || newCoordinate<0){
+      if (newCoordinate > 63 || newCoordinate < 0) {
         break;
       }
-      if (this.leftEdgeSquares.includes(newCoordinate)){
+      if (this.leftEdgeSquares.includes(newCoordinate)) {
         break;
       }
-      if (this.state.squares[newCoordinate] != ""){
-        if (this.state.squares[newCoordinate][0] == this.state.playerTurn){
+      if (this.state.squares[newCoordinate] != "") {
+        if (this.state.squares[newCoordinate][0] == this.state.playerTurn) {
           break;
         }
       }
       legal.push([coordinate, newCoordinate]);
     }
     // check moving left
-    for (let i = 1; i<=7; i++){
+    for (let i = 1; i <= 7; i++) {
       let newCoordinate = coordinate - i
-      if (newCoordinate>63 || newCoordinate<0){
+      if (newCoordinate > 63 || newCoordinate < 0) {
         break;
       }
-      if (this.rightEdgeSquares.includes(newCoordinate)){
+      if (this.rightEdgeSquares.includes(newCoordinate)) {
         break;
       }
-      if (this.state.squares[newCoordinate] != ""){
-        if (this.state.squares[newCoordinate][0] == this.state.playerTurn){
+      if (this.state.squares[newCoordinate] != "") {
+        if (this.state.squares[newCoordinate][0] == this.state.playerTurn) {
           break;
         }
       }
       legal.push([coordinate, newCoordinate]);
     }
     // check moving up
-    for (let i = 1; i<=7; i++){
-      let newCoordinate = coordinate - i*8
-      if (newCoordinate>63 || newCoordinate<0){
+    for (let i = 1; i <= 7; i++) {
+      let newCoordinate = coordinate - i * 8
+      if (newCoordinate > 63 || newCoordinate < 0) {
         break;
       }
-      if (this.state.squares[newCoordinate] != ""){
-        if (this.state.squares[newCoordinate][0] == this.state.playerTurn){
+      if (this.state.squares[newCoordinate] != "") {
+        if (this.state.squares[newCoordinate][0] == this.state.playerTurn) {
           break;
         }
       }
       legal.push([coordinate, newCoordinate]);
     }
     // check moving down
-    for (let i = 1; i<=7; i++){
-      let newCoordinate = coordinate + i*8
-      if (newCoordinate>63 || newCoordinate<0){
+    for (let i = 1; i <= 7; i++) {
+      let newCoordinate = coordinate + i * 8
+      if (newCoordinate > 63 || newCoordinate < 0) {
         break;
       }
-      if (this.state.squares[newCoordinate] != ""){
-        if (this.state.squares[newCoordinate][0] == this.state.playerTurn){
+      if (this.state.squares[newCoordinate] != "") {
+        if (this.state.squares[newCoordinate][0] == this.state.playerTurn) {
           break;
         }
       }
@@ -123,58 +274,58 @@ class Board extends React.Component {
     return legal;
   }
 
-  findLegalMoves() {
-    // look through all squares
-    for(let i = 0; i<=63; i++) {
-      // check if square isn't empty
-      if (this.state.squares[i] != "") {
-        // check if piece is correct color
-        if (this.state.squares[i][0] == this.state.playerTurn){
-          // check if rook
-          if (this.state.squares[i][1] == "R"){
-            this.rook()
-          }
-          // check if 
-        }
-      }
-    }
-  }
-
   handleClick(coordinate) {
     let piece = this.state.squares[coordinate]
     if (this.state.click1 == -1 && piece != "") {
       if (piece[0] == this.state.playerTurn) {
-        this.setState({click1: coordinate});
+        this.setState({ click1: coordinate });
       }
     }
     else if (this.state.click1 != -1 && (piece[0] != this.state.playerTurn)) {
-      let legal = this.rook(this.state.click1)
-      let move = [this.state.click1, coordinate]
-      console.log(legal, move)
-      let a = JSON.stringify(legal);
+      let legalMoves = []
+      if (this.state.squares[this.state.click1][1] == "P") {
+        legalMoves = this.pawn(this.state.click1);
+      }
+      else if (this.state.squares[this.state.click1][1] == "N") {
+        legalMoves = this.knight(this.state.click1);
+      }
+      else if (this.state.squares[this.state.click1][1] == "B") {
+
+      }
+      else if (this.state.squares[this.state.click1][1] == "R") {
+        legalMoves = this.rook(this.state.click1)
+      }
+      else if (this.state.squares[this.state.click1][1] == "Q") {
+
+      }
+      else if (this.state.squares[this.state.click1][1] == "K") {
+
+      }
+      let move = [this.state.click1, coordinate];
+      let a = JSON.stringify(legalMoves);
       let b = JSON.stringify(move);
       let c = a.indexOf(b);
-      if(c != -1){
+      if (c != -1) {
         const squares = this.state.squares.slice();
         squares[coordinate] = this.state.squares[this.state.click1];
         squares[this.state.click1] = "";
-        this.setState({squares: squares, click1: -1, playerTurn: this.state.playerTurn == "W"? "B":"W"})
+        this.setState({ squares: squares, click1: -1, playerTurn: this.state.playerTurn == "W" ? "B" : "W" })
       }
 
     }
     else {
-      this.setState({click1: -1})
+      this.setState({ click1: -1 })
     }
-    
+
   }
 
   renderSquare(coordinate, color) {
-    return <Square 
-              coordinate={coordinate} 
-              piece={this.state.squares[coordinate]}
-              color = {color}
-              onClick={() => this.handleClick(coordinate)}
-            />;
+    return <Square
+      coordinate={coordinate}
+      piece={this.state.squares[coordinate]}
+      color={color}
+      onClick={() => this.handleClick(coordinate)}
+    />;
   }
 
   render() {
