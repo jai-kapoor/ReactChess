@@ -211,6 +211,66 @@ class Board extends React.Component {
     }
     return legal;
   }
+  bishop(coordinate){
+    let legal = [];
+    // top left direction
+    for (let i = 1; i <= 7; i++){
+      let newCoordinate = coordinate - 9*i;
+      if (newCoordinate < 0) {
+        break;
+      }
+      if (this.rightEdgeSquares.includes(newCoordinate)){
+        break;
+      }
+      if ((this.state.squares[newCoordinate]+"z")[0] == this.state.playerTurn){
+        break;
+      }
+      legal.push([coordinate, newCoordinate]);
+    }
+    // bottom left direction
+    for (let i = 1; i <= 7; i++){
+      let newCoordinate = coordinate + 7*i;
+      if (newCoordinate > 63) {
+        break;
+      }
+      if (this.rightEdgeSquares.includes(newCoordinate)){
+        break;
+      }
+      if ((this.state.squares[newCoordinate]+"z")[0] == this.state.playerTurn){
+        break;
+      }
+      legal.push([coordinate, newCoordinate]);
+    }
+    // top right direction
+    for (let i = 1; i <= 7; i++){
+      let newCoordinate = coordinate - 7*i;
+      if (newCoordinate < 0) {
+        break;
+      }
+      if (this.leftEdgeSquares.includes(newCoordinate)){
+        break;
+      }
+      if ((this.state.squares[newCoordinate]+"z")[0] == this.state.playerTurn){
+        break;
+      }
+      legal.push([coordinate, newCoordinate]);
+    }
+    // bottom right direction
+    for (let i = 1; i <= 7; i++){
+      let newCoordinate = coordinate + 9*i;
+      if (newCoordinate > 63) {
+        break;
+      }
+      if (this.leftEdgeSquares.includes(newCoordinate)){
+        break;
+      }
+      if ((this.state.squares[newCoordinate]+"z")[0] == this.state.playerTurn){
+        break;
+      }
+      legal.push([coordinate, newCoordinate]);
+    }
+    return legal;
+  }
   rook(coordinate) {
     let legal = [];
     // check moving right
@@ -274,6 +334,67 @@ class Board extends React.Component {
     return legal;
   }
 
+  queen(coordinate){
+    return [this.rook(coordinate), this.bishop(coordinate)];
+  }
+  king(coordinate){
+    let legal = [];
+    let newCoordinate = coordinate + 1;
+    if (!this.leftEdgeSquares.includes(newCoordinate)){
+      if ((this.state.squares[newCoordinate]+"z")[0] != this.state.playerTurn){
+        legal.push([coordinate, newCoordinate]);
+      }
+    }
+    newCoordinate = coordinate + 9;
+    if (!this.leftEdgeSquares.includes(newCoordinate)){
+      if ((this.state.squares[newCoordinate]+"z")[0] != this.state.playerTurn){
+        legal.push([coordinate, newCoordinate]);
+      }
+    }
+    newCoordinate = coordinate - 7;
+    if (!this.leftEdgeSquares.includes(newCoordinate)){
+      if ((this.state.squares[newCoordinate]+"z")[0] != this.state.playerTurn){
+        legal.push([coordinate, newCoordinate]);
+      }
+    }
+    newCoordinate = coordinate - 1;
+    if (!this.rightEdgeSquares.includes(newCoordinate)){
+      if ((this.state.squares[newCoordinate]+"z")[0] != this.state.playerTurn){
+        legal.push([coordinate, newCoordinate]);
+      }
+    }
+    newCoordinate = coordinate - 9;
+    if (!this.rightEdgeSquares.includes(newCoordinate)){
+      if ((this.state.squares[newCoordinate]+"z")[0] != this.state.playerTurn){
+        legal.push([coordinate, newCoordinate]);
+      }
+    }
+    newCoordinate = coordinate + 7;
+    if (!this.rightEdgeSquares.includes(newCoordinate)){
+      if ((this.state.squares[newCoordinate]+"z")[0] != this.state.playerTurn){
+        legal.push([coordinate, newCoordinate]);
+      }
+    }
+    // castling
+    if (this.state.squares[4] == "BK"){
+      if (this.state.squares[5] == "" && this.state.squares[6] == "" && this.state.squares[7] == "BR"){
+        legal.push([4, 6]);
+      }
+      if (this.state.squares[3] == "" && this.state.squares[2] == "" && this.state.squares[1] == "" && this.state.squares[0] == "BR"){
+        legal.push([4, 2]);
+      }
+    }
+    if (this.state.squares[60] == "WK"){
+      if (this.state.squares[61] == "" && this.state.squares[62] == "" && this.state.squares[63] == "WR"){
+        legal.push([60, 62]);
+      }
+      if (this.state.squares[59] == "" && this.state.squares[58] == "" && this.state.squares[57] == "" && this.state.squares[56] == "WR"){
+        legal.push([60, 58]);
+      }
+    }
+    return legal;
+  }
+
   handleClick(coordinate) {
     let piece = this.state.squares[coordinate]
     if (this.state.click1 == -1 && piece != "") {
@@ -290,27 +411,32 @@ class Board extends React.Component {
         legalMoves = this.knight(this.state.click1);
       }
       else if (this.state.squares[this.state.click1][1] == "B") {
-
+        legalMoves = this.bishop(this.state.click1);
       }
       else if (this.state.squares[this.state.click1][1] == "R") {
-        legalMoves = this.rook(this.state.click1)
+        legalMoves = this.rook(this.state.click1);
       }
       else if (this.state.squares[this.state.click1][1] == "Q") {
-
+        legalMoves = this.queen(this.state.click1);
       }
       else if (this.state.squares[this.state.click1][1] == "K") {
-
+        legalMoves = this.king(this.state.click1);
       }
       let move = [this.state.click1, coordinate];
       let a = JSON.stringify(legalMoves);
       let b = JSON.stringify(move);
       let c = a.indexOf(b);
       if (c != -1) {
+        // check for winner
         if (this.state.squares[coordinate] == "BK"){
           alert("White won");
         }
         if (this.state.squares[coordinate] == "WK"){
           alert("Black Won");
+        }
+
+        if (move = []){
+
         }
 
         const squares = this.state.squares.slice();
