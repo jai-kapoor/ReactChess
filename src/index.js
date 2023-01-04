@@ -2,6 +2,69 @@ import React from "react";
 import ReactDOM from 'react-dom/client';
 import "./index.css";
 
+function url(piece){
+  if (piece == "BP"){
+    return (<img 
+      src = "https://upload.wikimedia.org/wikipedia/commons/c/c7/Chess_pdt45.svg"
+      />)
+  }
+  if (piece == "WP"){
+    return (<img 
+      src = "https://upload.wikimedia.org/wikipedia/commons/4/45/Chess_plt45.svg" 
+      />)
+  }
+  if (piece == "WN"){
+    return (<img 
+      src = "https://upload.wikimedia.org/wikipedia/commons/7/70/Chess_nlt45.svg"
+      />)
+  }
+  if (piece == "BN"){
+    return (<img 
+      src = "https://upload.wikimedia.org/wikipedia/commons/e/ef/Chess_ndt45.svg"
+      />)
+  }
+  if (piece == "WB"){
+    return (<img 
+      src = "https://upload.wikimedia.org/wikipedia/commons/b/b1/Chess_blt45.svg"
+      />)
+  }
+  if (piece == "BB"){
+    return (<img 
+      src = "https://upload.wikimedia.org/wikipedia/commons/9/98/Chess_bdt45.svg"
+      />)
+  }
+  if (piece == "WR"){
+    return (<img 
+      src = "https://upload.wikimedia.org/wikipedia/commons/7/72/Chess_rlt45.svg"
+      />)
+  }
+  if (piece == "BR"){
+    return (<img 
+      src = "https://upload.wikimedia.org/wikipedia/commons/f/ff/Chess_rdt45.svg"
+      />)
+  }
+  if (piece == "WQ"){
+    return (<img 
+      src = "https://upload.wikimedia.org/wikipedia/commons/1/15/Chess_qlt45.svg"
+      />)
+  }
+  if (piece == "BQ"){
+    return (<img 
+      src = "https://upload.wikimedia.org/wikipedia/commons/4/47/Chess_qdt45.svg"
+      />)
+  }
+  if (piece == "WK"){
+    return (<img 
+      src = "https://upload.wikimedia.org/wikipedia/commons/4/42/Chess_klt45.svg"
+      />)
+  }
+  if (piece == "BK"){
+    return (<img 
+      src = "https://upload.wikimedia.org/wikipedia/commons/f/f0/Chess_kdt45.svg"
+      />)
+  }
+}
+
 class Square extends React.Component {
   render() {
     return (
@@ -9,7 +72,7 @@ class Square extends React.Component {
         className={["square", this.props.color].join(' ')}
         onClick={this.props.onClick}
       >
-        {this.props.piece}
+        {url(this.props.piece)}
       </button>
     );
   }
